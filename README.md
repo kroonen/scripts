@@ -16,11 +16,11 @@ A growing collection of scripts to make your life easier! Whether you're updatin
 
 1. **Clone the repo:**
     ```bash
-    git clone https://github.com/yourusername/script-collection.git
+    git clone https://github.com/kroonen/scripts.git
     ```
 2. **Navigate to the script directory:**
     ```bash
-    cd script-collection
+    cd scripts
     ```
 
 3. **Run the scripts:**
