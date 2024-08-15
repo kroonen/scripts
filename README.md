@@ -1,4 +1,4 @@
-# Rob's Script Collection 🚀
+# Rob's Scripts Collection 🚀
 
 A growing collection of scripts to make your life easier! Whether you're updating models, backing up data, or automating tasks, these scripts have you covered.
 
