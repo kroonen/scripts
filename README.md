@@ -12,7 +12,7 @@ A growing collection of scripts to make your life easier! Whether you're updatin
   - **Script:** `hf_backup.py`
   - **Purpose:** Back up all your Hugging Face models and spaces to a local directory.
 
-- ** LLaMa.CPP Quantizer:**
+- **LLaMa.CPP Quantizer:**
   - Script: `quant-model.py`
   - Purpose: Quantize raw language models to .GGUF files, supporting various quantization levels from 16-bit floating point down to 3-bit integer precision.
 
