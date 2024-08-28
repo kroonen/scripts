@@ -27,9 +27,9 @@ def convert_to_gguf(model_dir):
     print("Conversion complete.")
 
 def quantize_model(input_file, output_file, type_id, use_gpu, threads):
-    gpu_flag = "--gpu-layers 999999" if use_gpu else ""
-    thread_flag = f"--threads {threads}" if threads else ""
-    quantize_cmd = f"./llama-quantize {input_file} {output_file} {type_id} {gpu_flag} {thread_flag}"
+    gpu_flag = f"-ngl 35" if use_gpu else ""  # Assuming 35 layers, adjust as needed
+    thread_flag = f"-t {threads}" if threads else ""
+    quantize_cmd = f"./llama-quantize {gpu_flag} {thread_flag} {input_file} {output_file} {type_id}"
     run_command(quantize_cmd)
 
 def convert_and_quantize(model_dir, output_dir, use_gpu, threads):
@@ -68,7 +68,7 @@ def main():
     parser.add_argument("model_dir", help="Directory containing the model to quantize")
     parser.add_argument("--output-dir", default=".", help="Output directory for quantized models")
     parser.add_argument("--no-gpu", action="store_true", help="Disable GPU usage")
-    parser.add_argument("--threads", type=int, help="Number of threads to use")
+    parser.add_argument("--threads", type=int, default=16, help="Number of threads to use")
     args = parser.parse_args()
 
     use_gpu = detect_gpu() and not args.no_gpu
