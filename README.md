@@ -12,9 +12,9 @@ A growing collection of scripts to make your life easier! Whether you're updatin
   - **Script:** `hf_backup.py`
   - **Purpose:** Back up all your Hugging Face models and spaces to a local directory.
 
- - **LLaMa.CPP Quantizer:**
-  - **Script:** `quant-model.py`
-  - **Purpose:** Quantize a raw model to .GGUF files. (16 Floating Point down to 3 Int)
+- ** LLaMa.CPP Quantizer:**
+  - Script: `quant-model.py`
+  - Purpose: Quantize raw language models to .GGUF files, supporting various quantization levels from 16-bit floating point down to 3-bit integer precision.
 
 ## Quick Start
 
@@ -22,11 +22,12 @@ A growing collection of scripts to make your life easier! Whether you're updatin
     ```bash
     git clone https://github.com/kroonen/scripts.git
     ```
+    
 2. **Navigate to the script directory:**
     ```bash
     cd scripts
     ```
-
+    
 3. **Run the scripts:**
     - **For Ollama:**
       ```powershell
