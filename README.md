@@ -12,6 +12,10 @@ A growing collection of scripts to make your life easier! Whether you're updatin
   - **Script:** `hf_backup.py`
   - **Purpose:** Back up all your Hugging Face models and spaces to a local directory.
 
+ - **LLaMa.CPP Quantizer:**
+  - **Script:** `quant-model.py`
+  - **Purpose:** Quantize a raw model to .GGUF files. (16 Floating Point down to 3 Int)
+
 ## Quick Start
 
 1. **Clone the repo:**
@@ -31,6 +35,10 @@ A growing collection of scripts to make your life easier! Whether you're updatin
     - **For Hugging Face:**
       ```bash
       python hf_backup.py
+      ```
+    - **For LLaMa.CPP Quantizer:**
+      ```bash
+      python quant-model ./{{MODEL_DIRECTORY}}
       ```
 
 ## More to Come
