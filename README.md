@@ -39,7 +39,7 @@ A growing collection of scripts to make your life easier! Whether you're updatin
       ```
     - **For LLaMa.CPP Quantizer:**
       ```bash
-      python quant-model ./{{MODEL_DIRECTORY}}
+      python quant-model.py {{MODEL_INPUT_DIR}} --output-dir {{MODEL_OUTPUT_DIR}}
       ```
 
 ## More to Come
