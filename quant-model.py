@@ -3,6 +3,7 @@ import sys
 import subprocess
 import argparse
 from tqdm import tqdm
+import glob
 
 def run_command(cmd):
     try:
@@ -19,6 +20,13 @@ def convert_to_gguf(model_dir):
     run_command(convert_cmd)
     print("Conversion complete.")
 
+def find_gguf_file(model_dir):
+    gguf_files = glob.glob(os.path.join(model_dir, "*.gguf"))
+    if not gguf_files:
+        print(f"Error: No GGUF file found in {model_dir}")
+        sys.exit(1)
+    return gguf_files[0]
+
 def quantize_model(input_file, output_file, type_id):
     quantize_cmd = f"./llama-quantize {input_file} {output_file} {type_id}"
     run_command(quantize_cmd)
@@ -28,6 +36,10 @@ def convert_and_quantize(model_dir, output_dir):
     
     # Convert the model to GGUF format
     convert_to_gguf(model_dir)
+    
+    # Find the GGUF file
+    input_file = find_gguf_file(model_dir)
+    print(f"Using GGUF file: {input_file}")
     
     # Define the quantization configurations
     quantize_configs = [
@@ -47,7 +59,6 @@ def convert_and_quantize(model_dir, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     
     # Quantize the model with different configurations
-    input_file = os.path.join(model_dir, "ggml-model-f16.gguf")
     for config, type_id in tqdm(quantize_configs, desc="Quantizing"):
         output_file = os.path.join(output_dir, f"{model_name}-{config}.gguf")
         print(f"Quantizing to {config}...")
