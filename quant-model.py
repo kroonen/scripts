@@ -1,13 +1,42 @@
 import os
 import sys
 import subprocess
+import argparse
+from tqdm import tqdm
 
-def convert_and_quantize(model_dir):
+def run_command(cmd):
+    try:
+        result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing command: {cmd}")
+        print(f"Error message: {e.stderr}")
+        sys.exit(1)
+
+def detect_gpu():
+    try:
+        nvidia_smi = run_command("nvidia-smi")
+        return True
+    except:
+        return False
+
+def convert_to_gguf(model_dir):
+    print(f"Converting {model_dir} to GGUF format...")
+    convert_cmd = f"python ./convert_hf_to_gguf.py {model_dir}"
+    run_command(convert_cmd)
+    print("Conversion complete.")
+
+def quantize_model(input_file, output_file, type_id, use_gpu, threads):
+    gpu_flag = "--gpu-layers 999999" if use_gpu else ""
+    thread_flag = f"--threads {threads}" if threads else ""
+    quantize_cmd = f"./llama-quantize {input_file} {output_file} {type_id} {gpu_flag} {thread_flag}"
+    run_command(quantize_cmd)
+
+def convert_and_quantize(model_dir, output_dir, use_gpu, threads):
     model_name = os.path.basename(model_dir)
     
     # Convert the model to GGUF format
-    convert_cmd = f"python ./convert_hf_to_gguf.py {model_dir}"
-    subprocess.run(convert_cmd, shell=True)
+    convert_to_gguf(model_dir)
     
     # Define the quantization configurations
     quantize_configs = [
@@ -23,17 +52,32 @@ def convert_and_quantize(model_dir):
         ("F16", 1)
     ]
     
+    # Ensure output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+    
     # Quantize the model with different configurations
-    for config, type_id in quantize_configs:
-        input_file = os.path.join(model_dir, "ggml-model-f16.gguf")
-        output_file = f"{model_name}-{config}.gguf"
-        quantize_cmd = f"./llama-quantize {input_file} {output_file} {type_id}"
-        subprocess.run(quantize_cmd, shell=True)
+    input_file = os.path.join(model_dir, "ggml-model-f16.gguf")
+    for config, type_id in tqdm(quantize_configs, desc="Quantizing"):
+        output_file = os.path.join(output_dir, f"{model_name}-{config}.gguf")
+        print(f"Quantizing to {config}...")
+        quantize_model(input_file, output_file, type_id, use_gpu, threads)
+        print(f"Quantization to {config} complete.")
+
+def main():
+    parser = argparse.ArgumentParser(description="Convert and quantize LLaMA models.")
+    parser.add_argument("model_dir", help="Directory containing the model to quantize")
+    parser.add_argument("--output-dir", default=".", help="Output directory for quantized models")
+    parser.add_argument("--no-gpu", action="store_true", help="Disable GPU usage")
+    parser.add_argument("--threads", type=int, help="Number of threads to use")
+    args = parser.parse_args()
+
+    use_gpu = detect_gpu() and not args.no_gpu
+    if use_gpu:
+        print("GPU detected and will be used for quantization.")
+    else:
+        print("GPU not detected or disabled. CPU will be used for quantization.")
+
+    convert_and_quantize(args.model_dir, args.output_dir, use_gpu, args.threads)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <model_directory>")
-        sys.exit(1)
-    
-    model_dir = sys.argv[1]
-    convert_and_quantize(model_dir)
+    main()
